@@ -94,13 +94,22 @@ class GitHubService {
         }
       };
     } catch (err) {
+      // 422 = GitHub rejected creation (usually: repo already exists)
       if (err.status === 422) {
-        // Repo already exists — fetch its info and return it
         try {
+          // Ensure user is loaded (may be null after server restart)
+          if (!this.user) {
+            const { data: userData } = await this.octokit.rest.users.getAuthenticated();
+            this.user = userData;
+          }
+
+          // Try to fetch the existing repo
           const { data } = await this.octokit.rest.repos.get({
             owner: this.user.login,
             repo: name
           });
+
+          // Repo confirmed to exist on GitHub — safe to push to it
           return {
             success: true,
             created: false,
@@ -114,10 +123,19 @@ class GitHubService {
               private: data.private
             }
           };
-        } catch {
+        } catch (fetchErr) {
+          // fetch returned 404 → repo truly doesn't exist on this account
+          // The 422 was for another reason (e.g. name validation, org policy)
+          if (fetchErr.status === 404) {
+            return {
+              success: false,
+              error: `Could not create repository '${name}'. It may contain invalid characters or conflict with an existing name. Try a different name.`
+            };
+          }
+          // Some other fetch error
           return {
             success: false,
-            error: `Repository '${name}' already exists but could not fetch its details.`
+            error: `Repository creation failed: ${fetchErr.message || err.message}`
           };
         }
       }

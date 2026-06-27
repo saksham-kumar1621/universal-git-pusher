@@ -18,6 +18,11 @@ router.post('/create-repo', async (req, res) => {
       autoInit: false
     });
 
+    // Surface service-level errors as HTTP errors so frontend handles them properly
+    if (!result.success) {
+      return res.status(422).json({ error: result.error });
+    }
+
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
