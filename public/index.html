@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Universal GitHub Pusher — Push any project to GitHub with a beautiful GUI. No terminal needed.">
+  <title>Universal GitHub Pusher</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <!-- Animated particles background -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- App Root -->
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="logo">
+          <div class="logo-icon"><img src="/assets/logo.png" alt="UGP Logo" class="logo-img"></div>
+          <span class="logo-text">Universal GitHub Pusher</span>
+        </div>
+        <div class="header-user" id="header-user" style="display: none;">
+          <img class="header-avatar" id="header-avatar" src="" alt="avatar">
+          <span class="header-username" id="header-username"></span>
+          <button class="header-disconnect" id="btn-disconnect" title="Disconnect"><i data-lucide="log-out" class="lucide-icon-sm"></i> Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="container">
+
+        <!-- Auth Page -->
+        <div class="page active" id="page-auth">
+          <div class="auth-page">
+            <div class="auth-card">
+              <span class="auth-icon"><img src="/assets/logo.png" alt="UGP Logo" class="auth-logo-img"></span>
+              <h1 class="auth-title">Connect to GitHub</h1>
+              <p class="auth-subtitle">
+                Enter your Personal Access Token to get started.<br>
+                Your token is stored locally and never sent anywhere except GitHub.
+              </p>
+              <div class="auth-input-group">
+                <input type="password" id="input-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+              </div>
+              <a class="auth-link" href="https://github.com/settings/tokens/new?scopes=repo,read:user&description=Universal%20GitHub%20Pusher" target="_blank" rel="noopener">
+                <i data-lucide="external-link" class="lucide-icon-sm"></i> Create a new token on GitHub
+              </a>
+              <br>
+              <button class="btn btn-primary btn-lg" id="btn-connect" style="width: 100%; margin-top: 8px;">
+                <i data-lucide="plug" class="lucide-icon-sm"></i> Connect
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div class="page" id="page-dashboard">
+          <div class="dashboard-grid">
+            <!-- Profile Card -->
+            <div class="profile-card" id="profile-card">
+              <img class="profile-avatar" id="profile-avatar" src="" alt="avatar">
+              <div class="profile-info">
+                <h2 id="profile-name"></h2>
+                <div class="username" id="profile-username"></div>
+                <div class="profile-stats">
+                  <span class="profile-stat"><strong id="profile-repos">0</strong> repos</span>
+                  <span class="profile-stat"><strong id="profile-followers">0</strong> followers</span>
+                  <span class="profile-stat"><strong id="profile-following">0</strong> following</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Push Action Card / Drop Zone -->
+            <div class="push-action-card drop-zone" id="btn-new-push">
+              <div class="drop-zone-border"></div>
+              <span class="push-action-icon" id="dashboard-drop-icon"><i data-lucide="folder-up" class="lucide-icon-lg"></i></span>
+              <div class="push-action-title" id="dashboard-drop-title">Push a Project</div>
+              <div class="push-action-desc" id="dashboard-drop-desc">Drag & drop a folder here, or click to browse</div>
+              <input type="file" id="folder-input-native" webkitdirectory directory multiple hidden>
+            </div>
+
+            <!-- Recent Pushes -->
+            <div class="recent-section">
+              <div class="section-title"><i data-lucide="clock" class="lucide-icon-sm"></i> Recent Pushes</div>
+              <ul class="recent-list" id="recent-list">
+                <li class="empty-state">
+                  <span class="empty-state-icon"><i data-lucide="inbox" class="lucide-icon-lg"></i></span>
+                  No pushes yet. Start by pushing your first project!
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wizard Page -->
+        <div class="page" id="page-wizard">
+          <div class="wizard-page">
+            <!-- Progress Bar -->
+            <div class="wizard-progress" id="wizard-progress">
+              <div class="wizard-dot active" data-step="1">1</div>
+              <div class="wizard-line" data-line="1"></div>
+              <div class="wizard-dot" data-step="2">2</div>
+              <div class="wizard-line" data-line="2"></div>
+              <div class="wizard-dot" data-step="3">3</div>
+              <div class="wizard-line" data-line="3"></div>
+              <div class="wizard-dot" data-step="4">4</div>
+              <div class="wizard-line" data-line="4"></div>
+              <div class="wizard-dot" data-step="5">5</div>
+            </div>
+
+            <!-- Step 1: Select Folder -->
+            <div class="wizard-step" id="wizard-step-1">
+              <div class="wizard-card">
+                <h2 class="wizard-card-title"><i data-lucide="folder-open" class="lucide-icon-sm"></i> Select Project Folder</h2>
+                <p class="wizard-card-desc">Enter the path, browse, or drag & drop a folder to get started.</p>
+
+                <!-- Drop Zone -->
+                <div class="wizard-drop-zone drop-zone" id="wizard-drop-zone">
+                  <div class="drop-zone-border"></div>
+                  <div class="drop-zone-content">
+                    <span class="drop-zone-icon" id="wizard-drop-icon"><i data-lucide="folder-down" class="lucide-icon-lg"></i></span>
+                    <div class="drop-zone-text">Drag & drop a project folder here</div>
+                    <div class="drop-zone-subtext">or use the input below</div>
+                  </div>
+                </div>
+
+                <div class="folder-input-row">
+                  <input type="text" id="input-folder" placeholder="C:\Users\You\Projects\my-project">
+                  <button class="btn btn-secondary" id="btn-browse"><i data-lucide="folder-search" class="lucide-icon-sm"></i> Browse</button>
+                </div>
+
+                <div id="scan-results" style="display: none;">
+                  <div class="project-detected" id="project-detected">
+                    <span class="project-detected-icon" id="project-icon"><i data-lucide="folder-code" class="lucide-icon-md"></i></span>
+                    <div class="project-detected-info">
+                      <h4 id="project-name"></h4>
+                      <p id="project-detail"></p>
+                    </div>
+                  </div>
+
+                  <div class="file-stats" id="file-stats">
+                    <div class="file-stat">
+                      <div class="file-stat-value" id="stat-files">0</div>
+                      <div class="file-stat-label">Files</div>
+                    </div>
+                    <div class="file-stat">
+                      <div class="file-stat-value" id="stat-size">0</div>
+                      <div class="file-stat-label">Total Size</div>
+                    </div>
+                    <div class="file-stat">
+                      <div class="file-stat-value" id="stat-extensions">0</div>
+                      <div class="file-stat-label">File Types</div>
+                    </div>
+                  </div>
+
+                  <div class="file-tree" id="file-tree"></div>
+                </div>
+
+                <div class="wizard-buttons">
+                  <button class="btn btn-secondary" id="btn-wizard-cancel"><i data-lucide="x" class="lucide-icon-sm"></i> Cancel</button>
+                  <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" id="btn-scan" style="display: none;"><i data-lucide="scan" class="lucide-icon-sm"></i> Scan Folder</button>
+                    <button class="btn btn-primary" id="btn-step1-next" disabled>Next <i data-lucide="arrow-right" class="lucide-icon-sm"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Configure Repository -->
+            <div class="wizard-step" id="wizard-step-2" style="display: none;">
+              <div class="wizard-card">
+                <h2 class="wizard-card-title"><i data-lucide="settings" class="lucide-icon-sm"></i> Configure Repository</h2>
+                <p class="wizard-card-desc">Set up your GitHub repository details.</p>
+
+                <div class="repo-config-grid">
+                  <div class="input-group">
+                    <label>Repository Name</label>
+                    <input type="text" id="input-repo-name" placeholder="my-awesome-project">
+                    <div class="name-check" id="name-check"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <label>Description (optional)</label>
+                    <input type="text" id="input-repo-desc" placeholder="A brief description of your project">
+                  </div>
+
+                  <div class="input-group">
+                    <label>Visibility</label>
+                    <div class="visibility-toggle" id="visibility-toggle">
+                      <div class="visibility-option active" data-visibility="public">
+                        <span class="visibility-option-icon"><i data-lucide="globe" class="lucide-icon-md"></i></span>
+                        <div class="visibility-option-label">Public</div>
+                        <div class="visibility-option-desc">Anyone can see</div>
+                      </div>
+                      <div class="visibility-option" data-visibility="private">
+                        <span class="visibility-option-icon"><i data-lucide="lock" class="lucide-icon-md"></i></span>
+                        <div class="visibility-option-label">Private</div>
+                        <div class="visibility-option-desc">Only you can see</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="wizard-buttons">
+                  <button class="btn btn-secondary" id="btn-step2-back"><i data-lucide="arrow-left" class="lucide-icon-sm"></i> Back</button>
+                  <button class="btn btn-primary" id="btn-step2-next" disabled>Next <i data-lucide="arrow-right" class="lucide-icon-sm"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: Gitignore -->
+            <div class="wizard-step" id="wizard-step-3" style="display: none;">
+              <div class="wizard-card">
+                <h2 class="wizard-card-title"><i data-lucide="file-minus" class="lucide-icon-sm"></i> Configure .gitignore</h2>
+                <p class="wizard-card-desc">Select a template to exclude unnecessary files from your repository.</p>
+
+                <div class="gitignore-templates-grid" id="gitignore-templates"></div>
+
+                <div class="input-group" style="margin-top: 16px;">
+                  <label>.gitignore Preview</label>
+                  <div class="gitignore-preview" id="gitignore-preview">Select a template above...</div>
+                </div>
+
+                <div class="wizard-buttons">
+                  <button class="btn btn-secondary" id="btn-step3-back"><i data-lucide="arrow-left" class="lucide-icon-sm"></i> Back</button>
+                  <button class="btn btn-primary" id="btn-step3-next">Next <i data-lucide="arrow-right" class="lucide-icon-sm"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: Commit Message -->
+            <div class="wizard-step" id="wizard-step-4" style="display: none;">
+              <div class="wizard-card">
+                <h2 class="wizard-card-title"><i data-lucide="message-square" class="lucide-icon-sm"></i> Commit Details</h2>
+                <p class="wizard-card-desc">Write a commit message and choose a branch name.</p>
+
+                <div class="commit-config">
+                  <div class="input-group">
+                    <label>Commit Message</label>
+                    <textarea id="input-commit-msg" placeholder="Initial commit" rows="3">Initial commit</textarea>
+                  </div>
+
+                  <div class="input-group">
+                    <label>Branch Name</label>
+                    <input type="text" id="input-branch" placeholder="main" value="main">
+                  </div>
+                </div>
+
+                <div class="wizard-buttons">
+                  <button class="btn btn-secondary" id="btn-step4-back"><i data-lucide="arrow-left" class="lucide-icon-sm"></i> Back</button>
+                  <button class="btn btn-success btn-lg" id="btn-push"><i data-lucide="upload-cloud" class="lucide-icon-sm"></i> Push to GitHub</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 5: Pushing / Results -->
+            <div class="wizard-step" id="wizard-step-5" style="display: none;">
+              <div class="wizard-card">
+                <h2 class="wizard-card-title" id="push-title"><i data-lucide="loader" class="lucide-icon-sm lucide-spin"></i> Pushing to GitHub...</h2>
+                <p class="wizard-card-desc" id="push-subtitle">Please wait while we push your project.</p>
+
+                <div class="push-progress" id="push-progress">
+                  <div class="push-step" data-push-step="gitignore">
+                    <div class="push-step-icon pending" id="ps-icon-gitignore"><i data-lucide="file-minus" class="lucide-icon-sm"></i></div>
+                    <div class="push-step-info">
+                      <div class="push-step-name">Writing .gitignore</div>
+                      <div class="push-step-detail" id="ps-detail-gitignore">Waiting...</div>
+                    </div>
+                  </div>
+                  <div class="push-step" data-push-step="init">
+                    <div class="push-step-icon pending" id="ps-icon-init"><i data-lucide="wrench" class="lucide-icon-sm"></i></div>
+                    <div class="push-step-info">
+                      <div class="push-step-name">Initialize Repository</div>
+                      <div class="push-step-detail" id="ps-detail-init">Waiting...</div>
+                    </div>
+                  </div>
+                  <div class="push-step" data-push-step="create-repo">
+                    <div class="push-step-icon pending" id="ps-icon-create-repo"><i data-lucide="github" class="lucide-icon-sm"></i></div>
+                    <div class="push-step-info">
+                      <div class="push-step-name">Create GitHub Repository</div>
+                      <div class="push-step-detail" id="ps-detail-create-repo">Waiting...</div>
+                    </div>
+                  </div>
+                  <div class="push-step" data-push-step="add">
+                    <div class="push-step-icon pending" id="ps-icon-add"><i data-lucide="package" class="lucide-icon-sm"></i></div>
+                    <div class="push-step-info">
+                      <div class="push-step-name">Stage Files</div>
+                      <div class="push-step-detail" id="ps-detail-add">Waiting...</div>
+                    </div>
+                  </div>
+                  <div class="push-step" data-push-step="commit">
+                    <div class="push-step-icon pending" id="ps-icon-commit"><i data-lucide="save" class="lucide-icon-sm"></i></div>
+                    <div class="push-step-info">
+                      <div class="push-step-name">Commit Changes</div>
+                      <div class="push-step-detail" id="ps-detail-commit">Waiting...</div>
+                    </div>
+                  </div>
+                  <div class="push-step" data-push-step="push">
+                    <div class="push-step-icon pending" id="ps-icon-push"><i data-lucide="upload-cloud" class="lucide-icon-sm"></i></div>
+                    <div class="push-step-info">
+                      <div class="push-step-name">Push to GitHub</div>
+                      <div class="push-step-detail" id="ps-detail-push">Waiting...</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Success -->
+                <div class="push-success" id="push-success" style="display: none;">
+                  <span class="push-success-icon"><i data-lucide="check-circle-2" class="lucide-icon-xl"></i></span>
+                  <h3>Successfully Pushed!</h3>
+                  <p id="push-success-desc">Your project is now live on GitHub.</p>
+                  <a class="push-success-link" id="push-success-link" href="#" target="_blank" rel="noopener">
+                    <i data-lucide="external-link" class="lucide-icon-sm"></i> View on GitHub
+                  </a>
+                </div>
+
+                <!-- Error -->
+                <div class="push-error" id="push-error" style="display: none;">
+                  <div class="push-error-title"><i data-lucide="alert-triangle" class="lucide-icon-sm"></i> Push Failed</div>
+                  <div class="push-error-message" id="push-error-message"></div>
+                </div>
+
+                <div class="wizard-buttons" id="push-final-buttons" style="display: none;">
+                  <button class="btn btn-secondary" id="btn-back-dashboard"><i data-lucide="arrow-left" class="lucide-icon-sm"></i> Dashboard</button>
+                  <button class="btn btn-primary" id="btn-push-another"><i data-lucide="plus" class="lucide-icon-sm"></i> Push Another Project</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Folder Browser Modal -->
+  <div class="modal-overlay" id="folder-modal" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title"><i data-lucide="folder-open" class="lucide-icon-sm"></i> Browse Folders</span>
+        <button class="modal-close" id="modal-close"><i data-lucide="x" class="lucide-icon-sm"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-current-path" id="modal-path">Loading...</div>
+        <ul class="folder-list" id="folder-list"></ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" id="modal-up"><i data-lucide="corner-left-up" class="lucide-icon-sm"></i> Up</button>
+        <button class="btn btn-primary btn-sm" id="modal-select"><i data-lucide="check" class="lucide-icon-sm"></i> Select This Folder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/auth.js"></script>
+  <script src="js/components/dashboard.js"></script>
+  <script src="js/components/wizard.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Initialize all Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1947 @@
+/* ====================================================================
+   Universal GitHub Pusher — Pure Dark Neumorphism Theme
+   Every element is the SAME surface color, extruded/pressed via shadows only.
+   Typography uses rounded Nunito for soft, tactile feel.
+   ==================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ── CSS Custom Properties — Golden Ratio Design System ──
+   φ = 1.618 — All proportions follow Fibonacci spacing (3,5,8,13,21,34,55,89)
+   Font scale: each step ×1.618 from 13px base
+   ──────────────────────────────────────────────────────── */
+:root {
+  /* Golden Ratio */
+  --phi: 1.618;
+
+  /* THE surface — one single color for everything */
+  --surface: #2a2a3e;
+  --surface-rgb: 42, 42, 62;
+
+  /* Shadow pair — dark (bottom-right) & light (top-left) */
+  --shadow-dark: #1a1a2a;
+  --shadow-light: #3a3a52;
+
+  /* ── Fibonacci Spacing Scale (px) ── */
+  --sp-1: 3px;    /* fib(4) */
+  --sp-2: 5px;    /* fib(5) */
+  --sp-3: 8px;    /* fib(6) */
+  --sp-4: 13px;   /* fib(7) */
+  --sp-5: 21px;   /* fib(8) */
+  --sp-6: 34px;   /* fib(9) */
+  --sp-7: 55px;   /* fib(10) */
+  --sp-8: 89px;   /* fib(11) */
+
+  /* ── Golden Ratio Font Scale ── base 13px × φ^n ── */
+  --fs-xs: 10px;    /* 13 / φ^0.5 ≈ 10 */
+  --fs-sm: 13px;    /* base */
+  --fs-md: 15px;    /* 13 × φ^0.33 */
+  --fs-base: 17px;  /* 13 × φ^0.67 — body text */
+  --fs-lg: 21px;    /* 13 × φ */
+  --fs-xl: 27px;    /* 13 × φ^1.5 ≈ Fib */
+  --fs-2xl: 34px;   /* 13 × φ^2 ≈ Fib */
+  --fs-3xl: 44px;   /* 13 × φ^2.5 */
+  --fs-4xl: 55px;   /* 13 × φ^3 ≈ Fib */
+
+  /* ── Golden Ratio Line Heights ── φ-derived vertical rhythm ── */
+  --lh-tight: 1.0;         /* 1/φ ≈ 0.618 → clamped to 1.0 for headings */
+  --lh-snug: 1.236;        /* √(1/φ) — compact UI labels */
+  --lh-normal: 1.382;      /* 1/φ + φ/2.618 — card text, descriptions */
+  --lh-relaxed: 1.618;     /* φ itself — body text, paragraphs */
+  --lh-loose: 2.058;       /* φ × 1.272 — code blocks, spaced lists */
+
+  /* ── Golden Ratio Letter Spacing ── inverse to font size ── */
+  --ls-tight: -0.02em;     /* large headings: tighter tracking */
+  --ls-snug: -0.01em;      /* medium headings */
+  --ls-normal: 0.01em;     /* body text */
+  --ls-wide: 0.038em;      /* 1/φ^3 — small text, labels */
+  --ls-wider: 0.062em;     /* 1/φ^2 — uppercase, tiny text */
+  --ls-widest: 0.1em;      /* 1/φ^1.5 — all-caps micro labels */
+
+  /* ── Golden Ratio Word Spacing ── */
+  --ws-tight: -0.02em;     /* tight headings */
+  --ws-normal: 0.062em;    /* 1/φ^2 — body */
+  --ws-wide: 0.1em;        /* spaced-out labels */
+
+  /* ── Optimal Reading Width ── φ-based: ~55ch (34+21 fib pair) ── */
+  --measure: 55ch;
+
+  /* ── Neumorphic Shadows — Fibonacci distances ── */
+  --neu-xs: 2px 2px 3px var(--shadow-dark), -2px -2px 3px var(--shadow-light);
+  --neu-sm: 3px 3px 5px var(--shadow-dark), -3px -3px 5px var(--shadow-light);
+  --neu-md: 5px 5px 8px var(--shadow-dark), -5px -5px 8px var(--shadow-light);
+  --neu-lg: 8px 8px 13px var(--shadow-dark), -8px -8px 13px var(--shadow-light);
+  --neu-xl: 13px 13px 21px var(--shadow-dark), -13px -13px 21px var(--shadow-light);
+
+  /* Inset (concave / pressed) — same Fibonacci pairs */
+  --neu-inset-xs: inset 2px 2px 3px var(--shadow-dark), inset -2px -2px 3px var(--shadow-light);
+  --neu-inset-sm: inset 3px 3px 5px var(--shadow-dark), inset -3px -3px 5px var(--shadow-light);
+  --neu-inset-md: inset 5px 5px 8px var(--shadow-dark), inset -5px -5px 8px var(--shadow-light);
+  --neu-inset-lg: inset 8px 8px 13px var(--shadow-dark), inset -8px -8px 13px var(--shadow-light);
+
+  /* Text — softer, warmer tones that feel embossed on the surface */
+  --text-primary: #c8c8dc;
+  --text-secondary: #8585a0;
+  --text-muted: #555570;
+
+  /* Neumorphic text shadows — makes text look raised or pressed */
+  --text-emboss: 1px 1px 2px var(--shadow-dark), -1px -1px 2px var(--shadow-light);
+  --text-deboss: -1px -1px 1px var(--shadow-light), 1px 1px 2px var(--shadow-dark);
+  --text-emboss-strong: 2px 2px 3px var(--shadow-dark), -1px -1px 2px var(--shadow-light);
+
+  /* Accent colors — used ONLY for text, icons, and subtle glows — never as bg */
+  --accent-purple: #8b5cf6;
+  --accent-cyan: #06b6d4;
+  --accent-green: #10b981;
+  --accent-red: #ef4444;
+  --accent-amber: #f59e0b;
+  --accent-pink: #ec4899;
+
+  /* Accent glow overlays (for active states) */
+  --glow-purple: 0 0 13px rgba(139, 92, 246, 0.35);
+  --glow-cyan: 0 0 13px rgba(6, 182, 212, 0.35);
+  --glow-green: 0 0 13px rgba(16, 185, 129, 0.35);
+  --glow-red: 0 0 13px rgba(239, 68, 68, 0.35);
+  --glow-amber: 0 0 13px rgba(245, 158, 11, 0.35);
+
+  /* Radii — Fibonacci */
+  --r-sm: 8px;     /* fib(6) */
+  --r-md: 13px;    /* fib(7) */
+  --r-lg: 21px;    /* fib(8) */
+  --r-xl: 34px;    /* fib(9) */
+  --r-full: 50%;
+
+  /* Transitions — φ-based timing */
+  --t-fast: 0.15s ease;
+  --t-normal: 0.309s ease;   /* 0.5/φ */
+  --t-slow: 0.5s ease;
+  --t-bounce: 0.382s cubic-bezier(0.34, 1.56, 0.64, 1); /* 1/φ^2 duration */
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  letter-spacing: var(--ls-normal);
+  word-spacing: var(--ws-normal);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-weight: 400;
+}
+
+/* No gradient overlays — pure flat surface */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: none;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Lucide Icon Sizing & Neumorphic Styling ── */
+.lucide-icon-sm {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  stroke: currentColor;
+  display: inline-block;
+}
+
+.lucide-icon-md {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  stroke: currentColor;
+  display: inline-block;
+}
+
+.lucide-icon-lg {
+  width: 36px;
+  height: 36px;
+  stroke: currentColor;
+  display: inline-block;
+}
+
+.lucide-icon-xl {
+  width: 52px;
+  height: 52px;
+  stroke: currentColor;
+  display: inline-block;
+  filter: drop-shadow(2px 2px 3px var(--shadow-dark)) drop-shadow(-1px -1px 2px var(--shadow-light));
+}
+
+/* Spinning animation for loader icons */
+.lucide-spin {
+  animation: spin 1.2s linear infinite;
+}
+
+/* Default Lucide SVG styling */
+[data-lucide] {
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Icon containers inherit surface color + neumorphic text treatment */
+.auth-icon {
+  color: var(--accent-purple);
+  margin-bottom: var(--sp-5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.push-action-icon {
+  color: var(--text-secondary);
+}
+
+.push-success-icon {
+  color: var(--accent-green);
+  margin-bottom: var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state-icon {
+  color: var(--text-muted);
+  margin-bottom: var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
+.drop-zone-icon {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.push-step-icon {
+  color: var(--text-muted);
+}
+
+.visibility-option-icon,
+.gitignore-template-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.folder-list-item-icon {
+  color: var(--accent-cyan);
+}
+
+/* ── Particles (dimmed for neumorphism) ── */
+#particles-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.25;
+}
+
+/* ── Scrollbar — inset track, raised thumb ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+  box-shadow: var(--neu-inset-xs);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface);
+  border-radius: 4px;
+  box-shadow: var(--neu-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  box-shadow: var(--neu-md);
+}
+
+/* ── Layout ── */
+#app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 var(--sp-5);
+}
+
+/* ── Header — same surface, separated by shadow ── */
+.header {
+  padding: var(--sp-4) 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  box-shadow: 0 4px 10px var(--shadow-dark);
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  text-decoration: none;
+}
+
+.logo-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--neu-md);
+  transition: var(--t-normal);
+  animation: neuBreathe 4s ease-in-out infinite;
+  overflow: hidden;
+}
+
+/* Header logo image */
+.logo-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  border-radius: var(--sp-1);
+  filter: brightness(1.1);
+  transition: var(--t-normal);
+}
+
+.logo-icon:hover .logo-img {
+  filter: brightness(1.3) drop-shadow(0 0 5px rgba(139, 92, 246, 0.5));
+  transform: scale(1.08);
+}
+
+/* Auth page logo image — larger, neumorphic container */
+.auth-logo-img {
+  width: var(--sp-8);
+  height: var(--sp-8);
+  object-fit: contain;
+  border-radius: var(--r-lg);
+  filter: brightness(1.15);
+  transition: var(--t-normal);
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    filter: brightness(1.15);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.03);
+    filter: brightness(1.3) drop-shadow(0 0 13px rgba(139, 92, 246, 0.4));
+  }
+}
+
+.logo-icon:hover {
+  box-shadow: var(--neu-lg), var(--glow-purple);
+}
+
+.logo-text {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  letter-spacing: var(--ls-snug);
+  word-spacing: var(--ws-tight);
+  line-height: var(--lh-tight);
+  color: var(--text-primary);
+  text-shadow: var(--text-emboss-strong);
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.header-avatar {
+  width: var(--sp-6);
+  height: var(--sp-6);
+  border-radius: var(--r-full);
+  object-fit: cover;
+  box-shadow: var(--neu-sm);
+  transition: var(--t-normal);
+}
+
+.header-avatar:hover {
+  box-shadow: var(--neu-lg), var(--glow-purple);
+  transform: scale(1.05);
+}
+
+.header-username {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: var(--ls-wide);
+  line-height: var(--lh-snug);
+  text-shadow: var(--text-deboss);
+}
+
+.header-disconnect {
+  background: var(--surface);
+  border: none;
+  color: var(--accent-red);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  letter-spacing: var(--ls-wider);
+  line-height: var(--lh-snug);
+  cursor: pointer;
+  box-shadow: var(--neu-sm);
+  transition: var(--t-normal);
+}
+
+.header-disconnect:hover {
+  box-shadow: var(--neu-inset-sm);
+}
+
+.header-disconnect:active {
+  box-shadow: var(--neu-inset-md);
+}
+
+/* ── Main Content ── */
+.main {
+  padding: var(--sp-6) 0 var(--sp-7);
+}
+
+/* ── Page Views ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── Auth Page ── */
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+}
+
+.auth-card {
+  background: var(--surface);
+  border-radius: var(--r-xl);
+  padding: var(--sp-7);
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--neu-xl);
+  text-align: center;
+  animation: neuMorphIn 0.6s ease forwards;
+}
+
+
+.auth-title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  margin-bottom: var(--sp-3);
+  color: var(--text-primary);
+  text-shadow: var(--text-emboss-strong);
+  letter-spacing: var(--ls-tight);
+  line-height: var(--lh-snug);
+  word-spacing: var(--ws-tight);
+}
+
+.auth-subtitle {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  margin-bottom: var(--sp-6);
+  line-height: var(--lh-relaxed);
+  letter-spacing: var(--ls-normal);
+  max-width: var(--measure);
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: var(--text-deboss);
+}
+
+.auth-input-group {
+  position: relative;
+  margin-bottom: var(--sp-5);
+}
+
+.auth-input-group .input-icon {
+  position: absolute;
+  left: var(--sp-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: var(--fs-md);
+}
+
+.auth-link {
+  display: inline-block;
+  color: var(--accent-cyan);
+  font-size: var(--fs-sm);
+  margin-bottom: var(--sp-5);
+  text-decoration: none;
+  transition: var(--t-fast);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  box-shadow: var(--neu-xs);
+}
+
+.auth-link:hover {
+  color: var(--accent-purple);
+  box-shadow: var(--neu-inset-xs);
+}
+
+/* ── Dashboard ── */
+.dashboard-grid {
+  display: grid;
+  gap: var(--sp-6);
+  animation: neuMorphIn 0.5s ease;
+}
+
+/* Profile Card — raised neumorphic surface */
+.profile-card {
+  background: var(--surface);
+  border-radius: var(--r-xl);
+  padding: var(--sp-6);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+  box-shadow: var(--neu-lg);
+  transition: var(--t-normal);
+}
+
+.profile-card:hover {
+  box-shadow: var(--neu-xl);
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--r-full);
+  box-shadow: var(--neu-md), var(--glow-purple);
+  transition: var(--t-normal);
+}
+
+.profile-avatar:hover {
+  transform: scale(1.08);
+  box-shadow: var(--neu-lg), var(--glow-purple);
+}
+
+.profile-info h2 {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  margin-bottom: var(--sp-1);
+  text-shadow: var(--text-emboss-strong);
+  letter-spacing: var(--ls-snug);
+  line-height: var(--lh-snug);
+}
+
+.profile-info .username {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  margin-bottom: var(--sp-3);
+  letter-spacing: var(--ls-wide);
+  text-shadow: var(--text-deboss);
+}
+
+.profile-stats {
+  display: flex;
+  gap: var(--sp-5);
+}
+
+.profile-stat {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: var(--ls-wide);
+  line-height: var(--lh-snug);
+  text-shadow: var(--text-deboss);
+}
+
+.profile-stat strong {
+  color: var(--accent-cyan);
+  font-weight: 600;
+}
+
+/* ── Push Action Card — same surface, raised ── */
+.push-action-card {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--r-xl);
+  padding: var(--sp-6);
+  text-align: center;
+  box-shadow: var(--neu-lg);
+  cursor: pointer;
+  transition: box-shadow var(--t-normal), transform var(--t-bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+.push-action-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  opacity: 0;
+  transition: var(--t-normal);
+  border-radius: inherit;
+}
+
+.push-action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--neu-xl), var(--glow-purple);
+}
+
+.push-action-card:active {
+  transform: translateY(0);
+  box-shadow: var(--neu-inset-lg);
+}
+
+.push-action-icon {
+  font-size: var(--fs-3xl);
+  margin-bottom: var(--sp-4);
+  display: block;
+  position: relative;
+  z-index: 1;
+  animation: neuFloat 3s ease-in-out infinite;
+}
+
+.push-action-title {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  margin-bottom: var(--sp-3);
+  position: relative;
+  z-index: 1;
+  text-shadow: var(--text-emboss);
+  letter-spacing: var(--ls-snug);
+  line-height: var(--lh-snug);
+}
+
+.push-action-desc {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+  letter-spacing: var(--ls-normal);
+  line-height: var(--lh-normal);
+  text-shadow: var(--text-deboss);
+}
+
+/* ── Recent Section ── */
+.recent-section {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--r-xl);
+  padding: var(--sp-5);
+  box-shadow: var(--neu-lg);
+}
+
+.section-title {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  margin-bottom: var(--sp-5);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  letter-spacing: var(--ls-wide);
+  line-height: var(--lh-snug);
+  text-transform: uppercase;
+  text-shadow: var(--text-emboss);
+}
+
+.recent-list {
+  list-style: none;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-4) var(--sp-4);
+  border-radius: var(--r-md);
+  transition: var(--t-normal);
+  margin-bottom: var(--sp-2);
+}
+
+.recent-item:hover {
+  box-shadow: var(--neu-inset-sm);
+}
+
+.recent-item-info {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.recent-item-icon {
+  width: var(--sp-6);
+  height: var(--sp-6);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-md);
+  box-shadow: var(--neu-sm);
+}
+
+.recent-item-name {
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  letter-spacing: var(--ls-normal);
+  line-height: var(--lh-snug);
+  text-shadow: var(--text-emboss);
+}
+
+.recent-item-path {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: var(--ls-wide);
+}
+
+.recent-item-time {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  letter-spacing: var(--ls-wide);
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--sp-6);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.empty-state-icon {
+  font-size: var(--fs-3xl);
+  margin-bottom: var(--sp-4);
+  display: block;
+  opacity: 0.5;
+}
+
+/* ── Wizard ── */
+.wizard-page {
+  animation: neuMorphIn 0.5s ease;
+}
+
+.wizard-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: var(--sp-6);
+  padding: 0 var(--sp-5);
+}
+
+.wizard-step-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+/* Wizard dots — neumorphic raised circles */
+.wizard-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-full);
+  background: var(--surface);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  box-shadow: var(--neu-sm);
+  transition: var(--t-normal);
+  flex-shrink: 0;
+}
+
+.wizard-dot.active {
+  color: var(--accent-purple);
+  box-shadow: var(--neu-md), var(--glow-purple);
+  animation: neuPulseGlow 2s ease-in-out infinite;
+}
+
+.wizard-dot.completed {
+  color: var(--accent-green);
+  box-shadow: var(--neu-inset-sm), var(--glow-green);
+}
+
+/* Wizard connecting line — inset groove */
+.wizard-line {
+  height: 4px;
+  width: 60px;
+  background: var(--surface);
+  box-shadow: var(--neu-inset-xs);
+  transition: var(--t-normal);
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.wizard-line.completed {
+  box-shadow: var(--neu-inset-xs), var(--glow-green);
+}
+
+/* Wizard Card — raised neumorphic panel */
+.wizard-card {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--r-xl);
+  padding: var(--sp-6);
+  box-shadow: var(--neu-lg);
+  animation: neuMorphIn 0.4s ease;
+}
+
+.wizard-card-title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  margin-bottom: var(--sp-3);
+  text-shadow: var(--text-emboss-strong);
+  letter-spacing: var(--ls-tight);
+  line-height: var(--lh-snug);
+}
+
+.wizard-card-desc {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  margin-bottom: var(--sp-5);
+  line-height: var(--lh-normal);
+  letter-spacing: var(--ls-normal);
+  text-shadow: var(--text-deboss);
+}
+
+/* ── Drop Zone — inset well ── */
+.drop-zone {
+  position: relative;
+}
+
+.drop-zone-border {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity var(--t-normal);
+}
+
+.drop-zone-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 2px dashed var(--accent-purple);
+  animation: borderPulse 2s ease-in-out infinite;
+}
+
+.drop-zone.drag-over .drop-zone-border {
+  opacity: 1;
+}
+
+.drop-zone.drag-over {
+  box-shadow: var(--neu-inset-lg), var(--glow-purple) !important;
+  transform: scale(1.01);
+}
+
+/* Wizard drop zone — inset concave well */
+.wizard-drop-zone {
+  border: none;
+  border-radius: var(--r-lg);
+  padding: var(--sp-6) var(--sp-5);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--t-normal);
+  margin-bottom: var(--sp-5);
+  background: var(--surface);
+  box-shadow: var(--neu-inset-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.wizard-drop-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  opacity: 0;
+  transition: var(--t-normal);
+}
+
+.wizard-drop-zone:hover {
+  box-shadow: var(--neu-inset-lg);
+}
+
+.wizard-drop-zone.drag-over {
+  box-shadow: var(--neu-inset-lg), var(--glow-purple) !important;
+}
+
+.wizard-drop-zone.drag-over .drop-zone-icon {
+  animation: neuDropBounce 0.6s ease infinite;
+}
+
+.drop-zone-content {
+  position: relative;
+  z-index: 1;
+}
+
+.drop-zone-icon {
+  font-size: var(--fs-3xl);
+  margin-bottom: var(--sp-4);
+  display: block;
+  transition: var(--t-normal);
+}
+
+.drop-zone-text {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--sp-1);
+  letter-spacing: var(--ls-snug);
+  line-height: var(--lh-snug);
+  text-shadow: var(--text-emboss);
+}
+
+.drop-zone-subtext {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: var(--ls-normal);
+  line-height: var(--lh-normal);
+  text-shadow: var(--text-deboss);
+}
+
+.drop-zone-path {
+  margin-top: var(--sp-4);
+  font-size: var(--fs-xs);
+  color: var(--accent-cyan);
+  font-family: 'JetBrains Mono', 'Cascadia Code', monospace;
+  word-break: break-all;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--neu-inset-sm);
+  border: none;
+  display: none;
+}
+
+.drop-zone-path.visible {
+  display: block;
+  animation: neuMorphIn 0.3s ease;
+}
+
+@keyframes borderPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes neuDropBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ── Wizard Step 1: Folder ── */
+.folder-input-row {
+  display: flex;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+
+.folder-input-row input {
+  flex: 1;
+}
+
+.project-detected {
+  background: var(--surface);
+  box-shadow: var(--neu-inset-sm);
+  border-radius: var(--r-md);
+  padding: var(--sp-4) var(--sp-5);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+  animation: neuMorphIn 0.3s ease;
+  border: none;
+}
+
+.project-detected-icon {
+  font-size: var(--fs-2xl);
+}
+
+.project-detected-info h4 {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  margin-bottom: var(--sp-1);
+  letter-spacing: var(--ls-snug);
+  line-height: var(--lh-snug);
+}
+
+.project-detected-info p {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  letter-spacing: var(--ls-normal);
+  line-height: var(--lh-normal);
+}
+
+.file-stats {
+  display: flex;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+
+.file-stat {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--r-md);
+  padding: var(--sp-4) var(--sp-5);
+  text-align: center;
+  flex: 1;
+  box-shadow: var(--neu-md);
+  transition: var(--t-normal);
+}
+
+.file-stat:hover {
+  box-shadow: var(--neu-lg);
+  transform: translateY(-2px);
+}
+
+.file-stat-value {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--accent-cyan);
+  letter-spacing: var(--ls-tight);
+  line-height: var(--lh-tight);
+}
+
+.file-stat-label {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-widest);
+  line-height: var(--lh-snug);
+  margin-top: var(--sp-1);
+}
+
+.file-tree {
+  background: var(--surface);
+  box-shadow: var(--neu-inset-md);
+  border: none;
+  border-radius: var(--r-md);
+  padding: var(--sp-4);
+  max-height: 250px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-loose);
+  letter-spacing: var(--ls-wide);
+}
+
+.file-tree-item {
+  padding-left: 0;
+  color: var(--text-secondary);
+}
+
+.file-tree-item.dir {
+  color: var(--accent-cyan);
+}
+
+.file-tree-item .size {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  margin-left: var(--sp-3);
+}
+
+/* ── Wizard Step 2: Repo Config ── */
+.repo-config-grid {
+  display: grid;
+  gap: var(--sp-5);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.input-group label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-shadow: var(--text-deboss);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wider);
+  line-height: var(--lh-snug);
+}
+
+.input-row {
+  display: flex;
+  gap: var(--sp-4);
+}
+
+.input-row .input-group {
+  flex: 1;
+}
+
+.name-check {
+  font-size: var(--fs-xs);
+  margin-top: var(--sp-1);
+  min-height: 18px;
+}
+
+.name-check.available {
+  color: var(--accent-green);
+}
+
+.name-check.taken {
+  color: var(--accent-red);
+}
+
+.name-check.checking {
+  color: var(--text-muted);
+}
+
+/* Visibility toggle — same surface, shadow state change */
+.visibility-toggle {
+  display: flex;
+  gap: var(--sp-4);
+}
+
+.visibility-option {
+  flex: 1;
+  padding: var(--sp-5);
+  border: none;
+  border-radius: var(--r-md);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--t-normal);
+  background: var(--surface);
+  box-shadow: var(--neu-md);
+}
+
+.visibility-option:hover {
+  box-shadow: var(--neu-lg);
+  transform: translateY(-3px);
+}
+
+/* Active = pressed INTO the surface */
+.visibility-option.active {
+  box-shadow: var(--neu-inset-md);
+  animation: neuPress 0.35s ease;
+}
+
+.visibility-option.active .visibility-option-label {
+  color: var(--accent-purple);
+}
+
+.visibility-option-icon {
+  font-size: var(--fs-xl);
+  margin-bottom: var(--sp-2);
+  display: block;
+}
+
+.visibility-option-label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  transition: var(--t-fast);
+  letter-spacing: var(--ls-normal);
+  line-height: var(--lh-snug);
+  text-shadow: var(--text-emboss);
+}
+
+.visibility-option-desc {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin-top: var(--sp-1);
+  letter-spacing: var(--ls-wide);
+  line-height: var(--lh-normal);
+}
+
+/* ── Wizard Step 3: Gitignore ── */
+.gitignore-templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+
+.gitignore-template-card {
+  padding: var(--sp-4);
+  border: none;
+  border-radius: var(--r-md);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--t-normal);
+  background: var(--surface);
+  box-shadow: var(--neu-sm);
+}
+
+.gitignore-template-card:hover {
+  box-shadow: var(--neu-md);
+  transform: translateY(-3px);
+}
+
+/* Active = pressed in */
+.gitignore-template-card.active {
+  box-shadow: var(--neu-inset-sm);
+  animation: neuPress 0.35s ease;
+}
+
+.gitignore-template-card.active .gitignore-template-name {
+  color: var(--accent-purple);
+}
+
+.gitignore-template-icon {
+  font-size: var(--fs-xl);
+  margin-bottom: var(--sp-2);
+  display: block;
+}
+
+.gitignore-template-name {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  transition: var(--t-fast);
+  letter-spacing: var(--ls-wide);
+  line-height: var(--lh-snug);
+  text-shadow: var(--text-emboss);
+}
+
+.gitignore-preview {
+  background: var(--surface);
+  box-shadow: var(--neu-inset-md);
+  border: none;
+  border-radius: var(--r-md);
+  padding: var(--sp-4);
+  font-family: 'JetBrains Mono', 'Cascadia Code', monospace;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-loose);
+  letter-spacing: var(--ls-wide);
+  max-height: 200px;
+  overflow-y: auto;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+}
+
+/* ── Wizard Step 4: Commit ── */
+.commit-config {
+  display: grid;
+  gap: var(--sp-5);
+}
+
+/* ── Wizard Step 5: Pushing ── */
+.push-progress {
+  padding: var(--sp-5) 0;
+}
+
+.push-step {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid rgba(var(--surface-rgb), 0.5);
+}
+
+.push-step:last-child {
+  border-bottom: none;
+}
+
+/* Step icons — neumorphic raised circles */
+.push-step-icon {
+  width: var(--sp-6);
+  height: var(--sp-6);
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-md);
+  flex-shrink: 0;
+  background: var(--surface);
+  box-shadow: var(--neu-sm);
+  transition: var(--t-normal);
+  border: none;
+}
+
+.push-step-icon.pending {
+  color: var(--text-muted);
+}
+
+/* Running = pulsing raised with purple glow */
+.push-step-icon.running {
+  color: var(--accent-purple);
+  box-shadow: var(--neu-md), var(--glow-purple);
+  animation: neuPulseGlow 1.5s ease-in-out infinite;
+}
+
+/* Done = pressed in with green glow */
+.push-step-icon.done {
+  color: var(--accent-green);
+  box-shadow: var(--neu-inset-sm), var(--glow-green);
+  animation: neuStepDone 0.5s ease;
+}
+
+/* Error = pressed in with red glow + shake */
+.push-step-icon.error {
+  color: var(--accent-red);
+  box-shadow: var(--neu-inset-sm), var(--glow-red);
+  animation: neuShake 0.5s ease;
+}
+
+/* Skipped = flat with amber */
+.push-step-icon.skipped {
+  color: var(--accent-amber);
+  box-shadow: var(--neu-xs);
+}
+
+.push-step-info {
+  flex: 1;
+}
+
+.push-step-name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: var(--ls-normal);
+  line-height: var(--lh-snug);
+  text-shadow: var(--text-emboss);
+}
+
+.push-step-detail {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: var(--ls-wide);
+  line-height: var(--lh-normal);
+  text-shadow: var(--text-deboss);
+}
+
+/* ── Success state ── */
+.push-success {
+  text-align: center;
+  padding: var(--sp-6);
+  animation: neuMorphIn 0.5s ease;
+}
+
+.push-success-icon {
+  font-size: var(--fs-4xl);
+  margin-bottom: var(--sp-4);
+  display: block;
+  animation: neuCelebrate 0.7s ease;
+}
+
+.push-success h3 {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  margin-bottom: var(--sp-3);
+  color: var(--text-primary);
+  letter-spacing: var(--ls-tight);
+  line-height: var(--lh-snug);
+  text-shadow: var(--text-emboss-strong);
+}
+
+.push-success p {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  margin-bottom: var(--sp-5);
+  line-height: var(--lh-normal);
+  letter-spacing: var(--ls-normal);
+  max-width: var(--measure);
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: var(--text-deboss);
+}
+
+.push-success-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--accent-cyan);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: var(--fs-sm);
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--neu-md);
+  border: none;
+  transition: var(--t-normal);
+}
+
+.push-success-link:hover {
+  box-shadow: var(--neu-lg), var(--glow-cyan);
+  transform: translateY(-2px);
+}
+
+.push-success-link:active {
+  box-shadow: var(--neu-inset-sm);
+  transform: translateY(0);
+}
+
+/* ── Error state ── */
+.push-error {
+  background: var(--surface);
+  box-shadow: var(--neu-inset-md);
+  border: none;
+  border-radius: var(--r-md);
+  padding: var(--sp-5);
+  margin-top: var(--sp-5);
+  animation: neuMorphIn 0.3s ease;
+}
+
+.push-error-title {
+  color: var(--accent-red);
+  font-weight: 700;
+  font-size: var(--fs-md);
+  margin-bottom: var(--sp-3);
+  text-shadow: var(--text-emboss);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.push-error-message {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── Wizard Buttons ── */
+.wizard-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--sp-5);
+  gap: var(--sp-4);
+}
+
+/* ====================================================================
+   Form Elements — ALL neumorphic inset (pressed into surface)
+   ==================================================================== */
+input[type="text"],
+input[type="password"],
+input[type="url"],
+textarea,
+select {
+  width: 100%;
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--surface);
+  border: none;
+  border-radius: var(--r-md);
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 500;
+  font-size: var(--fs-sm);
+  outline: none;
+  box-shadow: var(--neu-inset-md);
+  transition: var(--t-normal);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: var(--neu-inset-lg), var(--glow-purple);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ====================================================================
+   Buttons — ALL same surface color, differentiated ONLY by shadows
+   ==================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--r-md);
+  font-family: 'Nunito', sans-serif;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: var(--ls-wider);
+  line-height: var(--lh-snug);
+  text-shadow: var(--text-emboss);
+  cursor: pointer;
+  border: none;
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: var(--neu-md);
+  transition: box-shadow var(--t-normal), transform var(--t-bounce);
+  white-space: nowrap;
+  position: relative;
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: var(--neu-xs);
+}
+
+/* Hover = more raised */
+.btn:hover:not(:disabled) {
+  box-shadow: var(--neu-lg);
+  transform: translateY(-2px);
+}
+
+/* Active/Click = pressed in (THE neumorphic click) */
+.btn:active:not(:disabled) {
+  box-shadow: var(--neu-inset-md);
+  transform: translateY(0) scale(0.97);
+}
+
+/* Primary = same surface + purple text + purple glow */
+.btn-primary {
+  color: var(--accent-purple);
+  box-shadow: var(--neu-md), var(--glow-purple);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: var(--neu-lg), var(--glow-purple);
+  transform: translateY(-3px);
+}
+
+.btn-primary:active:not(:disabled) {
+  box-shadow: var(--neu-inset-md), var(--glow-purple);
+  transform: translateY(0) scale(0.97);
+}
+
+/* Secondary = same surface, muted text */
+.btn-secondary {
+  color: var(--text-secondary);
+  box-shadow: var(--neu-sm);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  color: var(--text-primary);
+  box-shadow: var(--neu-md);
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active:not(:disabled) {
+  box-shadow: var(--neu-inset-sm);
+  transform: translateY(0) scale(0.97);
+}
+
+/* Success = same surface + green text + green glow */
+.btn-success {
+  color: var(--accent-green);
+  box-shadow: var(--neu-md), var(--glow-green);
+}
+
+.btn-success:hover:not(:disabled) {
+  box-shadow: var(--neu-lg), var(--glow-green);
+  transform: translateY(-3px);
+}
+
+.btn-success:active:not(:disabled) {
+  box-shadow: var(--neu-inset-md), var(--glow-green);
+  transform: translateY(0) scale(0.97);
+}
+
+/* Danger = same surface + red text + red glow */
+.btn-danger {
+  color: var(--accent-red);
+  box-shadow: var(--neu-md), var(--glow-red);
+}
+
+.btn-danger:hover:not(:disabled) {
+  box-shadow: var(--neu-lg), var(--glow-red);
+  transform: translateY(-3px);
+}
+
+.btn-danger:active:not(:disabled) {
+  box-shadow: var(--neu-inset-md), var(--glow-red);
+  transform: translateY(0) scale(0.97);
+}
+
+.btn-sm {
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-sm);
+  box-shadow: var(--neu-sm);
+}
+
+.btn-lg {
+  padding: var(--sp-4) var(--sp-6);
+  font-size: var(--fs-md);
+  box-shadow: var(--neu-lg);
+}
+
+/* ── Toast Notifications — neumorphic raised ── */
+.toast-container {
+  position: fixed;
+  top: var(--sp-5);
+  right: var(--sp-5);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.toast {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--r-md);
+  padding: var(--sp-4) var(--sp-5);
+  min-width: 300px;
+  max-width: 420px;
+  box-shadow: var(--neu-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  animation: neuSlideIn 0.4s var(--t-bounce);
+  border-left: var(--sp-1) solid var(--accent-purple);
+}
+
+.toast.success { border-left-color: var(--accent-green); }
+.toast.error { border-left-color: var(--accent-red); }
+.toast.warning { border-left-color: var(--accent-amber); }
+
+.toast-icon { font-size: var(--fs-lg); flex-shrink: 0; }
+.toast-message { font-size: var(--fs-sm); flex: 1; letter-spacing: var(--ls-normal); line-height: var(--lh-normal); }
+
+.toast-close {
+  background: var(--surface);
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: var(--fs-md);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-sm);
+  box-shadow: var(--neu-xs);
+  transition: var(--t-fast);
+}
+
+.toast-close:hover {
+  box-shadow: var(--neu-inset-xs);
+  color: var(--text-primary);
+}
+
+.toast.hiding {
+  animation: neuSlideOut 0.3s ease forwards;
+}
+
+/* ── Loading Spinner ── */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--text-primary);
+  border-radius: var(--r-full);
+  animation: spin 0.7s linear infinite;
+}
+
+.spinner-sm {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Folder Browser Modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 18, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--r-xl);
+  width: 90%;
+  max-width: 560px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--neu-xl), 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: neuMorphIn 0.3s ease;
+}
+
+.modal-header {
+  padding: var(--sp-5) var(--sp-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: var(--ls-snug);
+  line-height: var(--lh-snug);
+}
+
+.modal-close {
+  background: var(--surface);
+  border: none;
+  color: var(--text-muted);
+  font-size: var(--fs-lg);
+  cursor: pointer;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-sm);
+  box-shadow: var(--neu-sm);
+  transition: var(--t-fast);
+}
+
+.modal-close:hover {
+  box-shadow: var(--neu-inset-sm);
+  color: var(--accent-red);
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-4) var(--sp-5);
+}
+
+.modal-current-path {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  font-family: monospace;
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--neu-inset-sm);
+  word-break: break-all;
+}
+
+.folder-list {
+  list-style: none;
+}
+
+.folder-list-item {
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--fs-sm);
+  transition: var(--t-fast);
+  margin-bottom: var(--sp-1);
+}
+
+.folder-list-item:hover {
+  box-shadow: var(--neu-inset-sm);
+}
+
+.folder-list-item-icon {
+  color: var(--accent-cyan);
+  font-size: var(--fs-md);
+}
+
+.modal-footer {
+  padding: var(--sp-4) var(--sp-5);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+}
+
+/* ====================================================================
+   NEUMORPHIC ANIMATIONS
+   ==================================================================== */
+
+/* Element morphs into existence — fades in + rises + shadow appears */
+@keyframes neuMorphIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+    box-shadow: none;
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Simple fade in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Toast slide in */
+@keyframes neuSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(50px) scale(0.95);
+    box-shadow: none;
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    box-shadow: var(--neu-xl);
+  }
+}
+
+/* Toast slide out */
+@keyframes neuSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(50px) scale(0.95);
+    box-shadow: none;
+  }
+}
+
+/* Spin */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Pulsing glow — shadow depth oscillates */
+@keyframes neuPulseGlow {
+  0%, 100% {
+    box-shadow: var(--neu-sm), 0 0 10px rgba(139, 92, 246, 0.2);
+  }
+  50% {
+    box-shadow: var(--neu-lg), 0 0 25px rgba(139, 92, 246, 0.45), 0 0 50px rgba(139, 92, 246, 0.15);
+  }
+}
+
+/* Breathing — element gently rises/lowers, shadow changes depth */
+@keyframes neuBreathe {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow: var(--neu-md);
+  }
+  50% {
+    transform: translateY(-4px);
+    box-shadow: var(--neu-lg);
+  }
+}
+
+/* Float animation for icons */
+@keyframes neuFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Press animation — transitions raised → inset (the core neumorphic interaction) */
+@keyframes neuPress {
+  0% {
+    box-shadow: var(--neu-md);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: var(--neu-inset-md);
+    transform: scale(0.96);
+  }
+  100% {
+    box-shadow: var(--neu-inset-md);
+    transform: scale(1);
+  }
+}
+
+/* Step completion — pops up then settles into inset */
+@keyframes neuStepDone {
+  0% {
+    transform: scale(1);
+    box-shadow: var(--neu-sm);
+  }
+  40% {
+    transform: scale(1.2);
+    box-shadow: var(--neu-lg), var(--glow-green);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: var(--neu-inset-sm), var(--glow-green);
+  }
+}
+
+/* Error shake */
+@keyframes neuShake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-6px); }
+  30% { transform: translateX(5px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+}
+
+/* Celebration bounce for success */
+@keyframes neuCelebrate {
+  0% {
+    transform: scale(0.2) rotate(-20deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(5deg);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(0.9) rotate(-3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .container { padding: 0 var(--sp-4); }
+  .auth-card { padding: var(--sp-6) var(--sp-5); }
+  .wizard-card { padding: var(--sp-5); }
+  .profile-card { flex-direction: column; text-align: center; }
+  .profile-stats { justify-content: center; }
+  .push-action-card { padding: var(--sp-5); }
+  .file-stats { flex-wrap: wrap; }
+  .folder-input-row { flex-direction: column; }
+  .input-row { flex-direction: column; }
+  .wizard-progress { gap: 0; overflow-x: auto; padding: 0 var(--sp-3); }
+  .wizard-line { width: 30px; }
+  .visibility-toggle { flex-direction: column; }
+  .gitignore-templates-grid { grid-template-columns: repeat(3, 1fr); }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "universal-github-pusher",
+  "version": "1.0.0",
+  "description": "A beautiful web-based GUI to push any project to GitHub — no terminal needed.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "keywords": ["github", "git", "push", "gui", "universal"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "octokit": "^3.2.1",
+    "simple-git": "^3.27.0"
+  }
+}
