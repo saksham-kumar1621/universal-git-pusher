@@ -4,6 +4,16 @@ class GitHubService {
   constructor() {
     this.octokit = null;
     this.user = null;
+    // Bootstrap: re-init from saved token on startup so server restarts don't log users out
+    this._bootstrap();
+  }
+
+  _bootstrap() {
+    const token = process.env.GITHUB_TOKEN;
+    if (token && !token.startsWith('ghp_xxx') && token.length > 10) {
+      this.octokit = new Octokit({ auth: token });
+      // user will be lazy-loaded on first request via ensureUser()
+    }
   }
 
   /**
@@ -11,7 +21,20 @@ class GitHubService {
    */
   init(token) {
     this.octokit = new Octokit({ auth: token });
-    this.user = null;
+    this.user = null; // will be loaded lazily
+  }
+
+  /**
+   * Ensure this.user is populated — lazy-loads from GitHub if null.
+   * Throws if not authenticated at all.
+   */
+  async ensureUser() {
+    if (!this.octokit) throw new Error('Not authenticated');
+    if (!this.user) {
+      const { data } = await this.octokit.rest.users.getAuthenticated();
+      this.user = data;
+    }
+    return this.user;
   }
 
   /**
@@ -49,29 +72,25 @@ class GitHubService {
    * Get current authenticated user
    */
   async getUser() {
-    if (!this.octokit) throw new Error('Not authenticated');
-    if (this.user) {
-      return {
-        login: this.user.login,
-        name: this.user.name,
-        avatar_url: this.user.avatar_url,
-        html_url: this.user.html_url,
-        public_repos: this.user.public_repos,
-        total_private_repos: this.user.total_private_repos,
-        bio: this.user.bio,
-        followers: this.user.followers,
-        following: this.user.following
-      };
-    }
-    const result = await this.validateToken();
-    return result.user;
+    const user = await this.ensureUser();
+    return {
+      login: user.login,
+      name: user.name,
+      avatar_url: user.avatar_url,
+      html_url: user.html_url,
+      public_repos: user.public_repos,
+      total_private_repos: user.total_private_repos,
+      bio: user.bio,
+      followers: user.followers,
+      following: user.following
+    };
   }
 
   /**
    * Create a new repository on GitHub
    */
   async createRepo({ name, description = '', isPrivate = false, autoInit = false }) {
-    if (!this.octokit) throw new Error('Not authenticated');
+    await this.ensureUser();
 
     try {
       const { data } = await this.octokit.rest.repos.createForAuthenticatedUser({
@@ -94,50 +113,61 @@ class GitHubService {
         }
       };
     } catch (err) {
-      // 422 = GitHub rejected creation (usually: repo already exists)
+      // 422 = Unprocessable — extract GitHub's real error reason
       if (err.status === 422) {
-        try {
-          // Ensure user is loaded (may be null after server restart)
-          if (!this.user) {
-            const { data: userData } = await this.octokit.rest.users.getAuthenticated();
-            this.user = userData;
-          }
+        // Pull the actual message from GitHub's error response
+        const ghErrors = err.response?.data?.errors || [];
+        const ghMessage = err.response?.data?.message || '';
+        const isNameTaken = ghErrors.some(e =>
+          (e.message || '').toLowerCase().includes('already exist') ||
+          (e.field === 'name' && e.code === 'custom')
+        ) || ghMessage.toLowerCase().includes('already exist');
 
-          // Try to fetch the existing repo
-          const { data } = await this.octokit.rest.repos.get({
-            owner: this.user.login,
-            repo: name
-          });
-
-          // Repo confirmed to exist on GitHub — safe to push to it
-          return {
-            success: true,
-            created: false,
-            existed: true,
-            repo: {
-              name: data.name,
-              full_name: data.full_name,
-              html_url: data.html_url,
-              clone_url: data.clone_url,
-              ssh_url: data.ssh_url,
-              private: data.private
+        if (isNameTaken) {
+          // Repo name is taken — try fetching it from *this* user's account
+          try {
+            const { data } = await this.octokit.rest.repos.get({
+              owner: this.user.login,
+              repo: name
+            });
+            // Confirmed on this account — safe to push to it
+            return {
+              success: true,
+              created: false,
+              existed: true,
+              repo: {
+                name: data.name,
+                full_name: data.full_name,
+                html_url: data.html_url,
+                clone_url: data.clone_url,
+                ssh_url: data.ssh_url,
+                private: data.private
+              }
+            };
+          } catch (fetchErr) {
+            if (fetchErr.status === 404) {
+              // Name is taken but repo doesn't show on this account —
+              // likely recently deleted (GitHub reserves names for ~5 min)
+              return {
+                success: false,
+                error: `Repository '${name}' was recently deleted. GitHub reserves deleted repo names for a few minutes. Please wait a moment and try again, or use a different name.`
+              };
             }
-          };
-        } catch (fetchErr) {
-          // fetch returned 404 → repo truly doesn't exist on this account
-          // The 422 was for another reason (e.g. name validation, org policy)
-          if (fetchErr.status === 404) {
             return {
               success: false,
-              error: `Could not create repository '${name}'. It may contain invalid characters or conflict with an existing name. Try a different name.`
+              error: `Repository '${name}' appears to be taken. Try a different name.`
             };
           }
-          // Some other fetch error
-          return {
-            success: false,
-            error: `Repository creation failed: ${fetchErr.message || err.message}`
-          };
         }
+
+        // Some other 422 reason — show GitHub's actual message
+        const reason = ghErrors.map(e => e.message).filter(Boolean).join(', ')
+          || ghMessage
+          || 'Repository name may be invalid.';
+        return {
+          success: false,
+          error: `GitHub rejected the repository name '${name}': ${reason}`
+        };
       }
       throw err;
     }
@@ -173,7 +203,7 @@ class GitHubService {
    * Check if a repository name is available
    */
   async checkRepoName(name) {
-    if (!this.octokit || !this.user) throw new Error('Not authenticated');
+    await this.ensureUser();
 
     try {
       await this.octokit.rest.repos.get({
@@ -192,8 +222,8 @@ class GitHubService {
   /**
    * Get the clone URL for a repo
    */
-  getCloneUrl(repoName) {
-    if (!this.user) throw new Error('Not authenticated');
+  async getCloneUrl(repoName) {
+    await this.ensureUser();
     return `https://github.com/${this.user.login}/${repoName}.git`;
   }
 
